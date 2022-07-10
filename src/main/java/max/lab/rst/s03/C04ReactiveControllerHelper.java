@@ -28,7 +28,7 @@ public class C04ReactiveControllerHelper {
     }
 
     @FunctionalInterface
-    public interface ExtraValidator<T> {
+    public interface ExtraValidator<T> { // 额外校验的接口
         Mono<Tuple2<T, Errors>> validate(T t, Errors errors);
     }
 
@@ -44,7 +44,7 @@ public class C04ReactiveControllerHelper {
         Assert.notNull(mono, "mono must NOT be null");
 
         return mono.flatMap(t -> {
-                    Errors errors = new BeanPropertyBindingResult(t, t.getClass().getName());
+                    Errors errors = new BeanPropertyBindingResult(t, t.getClass().getName()); // 这是啥？
                     validator.validate(t, errors);
                     Mono<Tuple2<T, Errors>> aMono = Mono.empty();
                     if (extraValidator != null) {

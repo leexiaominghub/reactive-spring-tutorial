@@ -26,7 +26,7 @@ import reactor.util.function.Tuples;
 public class C03RouterBased {
     private static final String PATH_PREFIX = "/routed/";
 
-    private final Validator validator;
+    private final Validator validator; // 这个只会做domain类里规定的指定校验，所以讲者做了一个额外校验的接口
     private final ObjectMapper objectMapper;
 
     @Bean
@@ -89,7 +89,7 @@ public class C03RouterBased {
 //        counter.set(1);
         
         return C04ReactiveControllerHelper.requestBodyToMono(request, validator,
-                (t, errors) -> InMemoryDataSource.findBookMonoById(t.getIsbn())
+                (t, errors) -> InMemoryDataSource.findBookMonoById(t.getIsbn()) // 校验唯一性
                             .map((book -> {
                                 errors.rejectValue("isbn", "already.exists", "Already exists");
                                 return Tuples.of(book, errors);
@@ -103,8 +103,8 @@ public class C03RouterBased {
 //                }
                 , Book.class)
                 .map(InMemoryDataSource::saveBook)
-                .flatMap(book -> ServerResponse.created(
-                    UriComponentsBuilder.fromHttpRequest(request.exchange().getRequest())
+                .flatMap(book -> ServerResponse.created( // 用then不行。then是结束一个mono。thenReturn区别。自动创建了201返回码
+                    UriComponentsBuilder.fromHttpRequest(request.exchange().getRequest()) // 返回serverHttpRequest
                             .path("/").path(book.getIsbn()).build().toUri())
                         .build());
     }

@@ -31,7 +31,7 @@ public class C03RouterBased {
 
     @Bean
     public RouterFunction<ServerResponse> routers() {
-        return RouterFunctions.route()
+        return RouterFunctions.route() // 可以做更多动态的设置？
                 .POST(PATH_PREFIX + "book", this::create)
                 .GET(PATH_PREFIX + "books", this::findAll)
                 .GET(PATH_PREFIX + "query-books", this::findByPage)

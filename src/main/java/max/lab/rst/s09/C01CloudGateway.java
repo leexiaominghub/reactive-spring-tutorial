@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s09;
 
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -43,3 +44,4 @@ public class C01CloudGateway {
                         .build();
         }
 }
+*/

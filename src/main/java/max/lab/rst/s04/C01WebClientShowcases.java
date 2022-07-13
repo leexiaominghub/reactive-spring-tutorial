@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s04;
 
 import java.math.BigDecimal;
@@ -14,10 +15,12 @@ import max.lab.rst.domain.Book;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
+*/
 /**
  * https://medium.com/@filia.aleks/microservice-performance-battle-spring-mvc-vs-webflux-80d39fd81bf0
  * https://medium.com/@kalpads/configuring-timeouts-in-spring-reactive-webclient-4bc5faf56411
- */
+ *//*
+
 public class C01WebClientShowcases {
     public static void main(String[] args) {
         var book = Book.builder().isbn(String.valueOf(System.currentTimeMillis()))
@@ -89,3 +92,4 @@ public class C01WebClientShowcases {
                                         .build();
     }
 }
+*/

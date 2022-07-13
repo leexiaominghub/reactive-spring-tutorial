@@ -43,22 +43,26 @@ public class C04ReactiveControllerHelper {
         Assert.notNull(validator, "validator must NOT be null");
         Assert.notNull(mono, "mono must NOT be null");
 
-        return mono.flatMap(t -> {
-                    Errors errors = new BeanPropertyBindingResult(t, t.getClass().getName()); // 这是啥？
+        return mono.flatMap(t -> { // 做两次校验，返回元素和错误
+                    Errors errors = new BeanPropertyBindingResult(t, t.getClass().getName()); // 这是啥？ 把两次校验的错误都填写到这里
                     validator.validate(t, errors);
                     Mono<Tuple2<T, Errors>> aMono = Mono.empty();
                     if (extraValidator != null) {
                         aMono = extraValidator.validate(t, errors);
                     }
                     return aMono.switchIfEmpty(Mono.just(Tuples.of(t, errors))); // Ensure there will data flowing in the pipeline
-                })
+                }) // 为什么不用map呢？
+                //.map(tuple2 -> {return tuple2.getT2().hasErrors()? Mono.error(new ValidationException(tuple2.getT2())): Mono.just(tuple2.getT1());}); // 为何不可？
+               .flatMap(tuple2 -> tuple2.getT2().hasErrors()? Mono.error(new ValidationException(tuple2.getT2())): Mono.just(tuple2.getT1()));
+/*
                 .flatMap(tuple2 -> {
                     var errors = tuple2.getT2();
                     if (errors.hasErrors()) {
-                        return Mono.error(new ValidationException(errors));
+                        return Mono.error(new ValidationException(errors)); // 抛出异常， 确切说是返回校验异常
                     }
-                    return Mono.just(tuple2.getT1());
+                    return Mono.just(tuple2.getT1()); // 校验通过， 返回正常值
                 });
+*/
     }
 
     public static <T> Mono<T> requestBodyToMono(ServerRequest request,

@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s08;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -73,3 +74,4 @@ public class C01ReactiveCircuitBreaker {
     }
 
 }
+*/

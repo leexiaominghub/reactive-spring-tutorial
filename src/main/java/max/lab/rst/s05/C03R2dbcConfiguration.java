@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s05;
 
 import io.r2dbc.spi.ConnectionFactory;
@@ -35,3 +36,4 @@ public class C03R2dbcConfiguration {
         return TransactionalOperator.create(transactionManager);
     }
 }
+*/

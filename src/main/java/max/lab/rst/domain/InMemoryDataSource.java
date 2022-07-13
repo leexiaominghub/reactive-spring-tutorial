@@ -1,5 +1,6 @@
 package max.lab.rst.domain;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Slf4j
 public final class InMemoryDataSource {
     public static final Book[] books = new Book[] {
         new Book("000001", "CS Book #1", BigDecimal.valueOf(19.99D), "CS"),
@@ -31,6 +33,7 @@ public final class InMemoryDataSource {
     private static final Map<String, Book> booksMap = new ConcurrentHashMap<>();
 
     public static Book saveBook(Book book) {
+        log.debug("lxm saveBook");
         booksMap.put(book.getIsbn(), book);
         return book;
     }

@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s05;
 
 import lombok.RequiredArgsConstructor;
@@ -68,3 +69,4 @@ public class C01BookRepository {
                 .all();
     }
 }
+*/

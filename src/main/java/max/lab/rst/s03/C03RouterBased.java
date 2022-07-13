@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import max.lab.rst.domain.InMemoryDataSource;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
+@Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class C03RouterBased {
@@ -87,7 +89,8 @@ public class C03RouterBased {
 //            return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 //        }
 //        counter.set(1);
-        
+
+        log.debug("lxm create");
         return C04ReactiveControllerHelper.requestBodyToMono(request, validator,
                 (t, errors) -> InMemoryDataSource.findBookMonoById(t.getIsbn()) // 校验唯一性
                             .map((book -> {
@@ -101,7 +104,7 @@ public class C03RouterBased {
 //                    }
 //                    return Tuples.of(t, errors);
 //                }
-                , Book.class)
+                , Book.class) // 如果校验没通过，这里会被截断？
                 .map(InMemoryDataSource::saveBook)
                 .flatMap(book -> ServerResponse.created( // 用then不行。then是结束一个mono。thenReturn区别。自动创建了201返回码
                     UriComponentsBuilder.fromHttpRequest(request.exchange().getRequest()) // 返回serverHttpRequest

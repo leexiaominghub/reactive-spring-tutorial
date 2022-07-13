@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s05;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,3 +102,4 @@ public class C02BookControllerWithR2dbc {
                         .build());
     }
 }
+*/

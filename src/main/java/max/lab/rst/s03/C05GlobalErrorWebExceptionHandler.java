@@ -27,13 +27,13 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @Component
-@Order(-2)
+@Order(-2) // 说明这类似一个切面
 public class C05GlobalErrorWebExceptionHandler extends
-        AbstractErrorWebExceptionHandler {
+        AbstractErrorWebExceptionHandler { // 是因为继承这个处理器所以才有自动处理错误的功能吗？
     public C05GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes,
                                              ResourceProperties resourceProperties,
                                              ApplicationContext applicationContext,
-                                             ServerCodecConfigurer configurer) {
+                                             ServerCodecConfigurer configurer) { // 是这个配置的错误信息的中英文吗？
         super(errorAttributes, resourceProperties, applicationContext);
         this.setMessageWriters(configurer.getWriters());
     }
@@ -54,9 +54,9 @@ public class C05GlobalErrorWebExceptionHandler extends
 
     @Override
     protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
-        return RouterFunctions.route(RequestPredicates.all(), (serverRequest -> {
+        return RouterFunctions.route(RequestPredicates.all(), (serverRequest -> { // 这里的all路由了所有路径？
             var throwable = errorAttributes.getError(serverRequest);
-            if (throwable instanceof ValidationException) {
+            if (throwable instanceof ValidationException) { // 这是自定义的异常
                 return handleValidationException((ValidationException) throwable);
             }
             if (throwable instanceof ResponseStatusException) {
@@ -74,15 +74,16 @@ public class C05GlobalErrorWebExceptionHandler extends
                 .bodyValue(error);
     }
 
-    private Mono<ServerResponse> handleValidationException(ValidationException exception) {
+    private Mono<ServerResponse> handleValidationException(ValidationException exception) { // 与前面的错误处理实现类似？哪个？
+        log.debug("lxm handleValidationException");
         var errors = exception.getErrors();
         var invalidFields = errors.getFieldErrors().stream()
                 .map(error -> new InvalidField(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
-        var theErrors = errors.getGlobalErrors().stream()
+        var theErrors = errors.getGlobalErrors().stream() // 全局错误？
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());
-        var error = new Error(invalidFields, theErrors);
+        var error = new Error(invalidFields, theErrors); // 返回客户端一个自定义的Error
         return ServerResponse.badRequest().bodyValue(error);
     }
 }

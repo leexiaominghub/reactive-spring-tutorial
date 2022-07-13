@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s07;
 
 import org.springframework.boot.CommandLineRunner;
@@ -39,3 +40,4 @@ public class C01ReactiveLoadBalancer {
     }
 
 }
+*/

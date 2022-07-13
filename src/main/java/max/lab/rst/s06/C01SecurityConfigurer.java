@@ -1,3 +1,4 @@
+/*
 package max.lab.rst.s06;
 
 import org.springframework.context.annotation.Bean;
@@ -62,3 +63,4 @@ public class C01SecurityConfigurer {
                 .build();
     }
 }
+*/

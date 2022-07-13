@@ -55,8 +55,8 @@ public final class InMemoryDataSource {
     }
 
     public static Collection<Book> findBooksByQuery(BookQuery query) {
-        return booksMap.values().stream()
-                .filter(book -> {
+        return booksMap.values().stream() // 更容易理解
+                .filter(book -> { // 按个条件过滤
                     var matched = true;
                     if (!StringUtils.isEmpty(query.getTitle())) {
                         matched &= book.getTitle().contains(query.getTitle());
@@ -70,8 +70,8 @@ public final class InMemoryDataSource {
                     return matched;
                 })
                 .sorted(Comparator.comparing(Book::getTitle))
-                .skip((query.getPage() - 1) * query.getSize())
-                .limit(query.getSize())
+                .skip((query.getPage() - 1) * query.getSize()) // 跨过前面的页
+                .limit(query.getSize()) // 拿来一页
                 .collect(Collectors.toList());
     }
 }

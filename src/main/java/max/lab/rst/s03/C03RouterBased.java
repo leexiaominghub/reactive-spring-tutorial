@@ -34,11 +34,11 @@ public class C03RouterBased {
     @Bean
     public RouterFunction<ServerResponse> routers() {
         return RouterFunctions.route() // 可以做更多动态的设置？
-                .POST(PATH_PREFIX + "book", this::create)
+                .POST(PATH_PREFIX + "book", this::create) // 非幂等, 同一本书校验出错
                 .GET(PATH_PREFIX + "books", this::findAll)
                 .GET(PATH_PREFIX + "query-books", this::findByPage)
                 .GET(PATH_PREFIX + "book/{isbn}", this::find)
-                .PUT(PATH_PREFIX + "book/{isbn}", this::update)
+                .PUT(PATH_PREFIX + "book/{isbn}", this::update) // 幂等操作， 同一本书可以
                 .DELETE(PATH_PREFIX + "book/{isbn}", this::delete)
                 .build();
     }
@@ -73,7 +73,8 @@ public class C03RouterBased {
     private Mono<ServerResponse> find(ServerRequest request) {
         var isbn = request.pathVariable("isbn");
         return InMemoryDataSource.findBookMonoById(isbn)
-                .flatMap(book -> ServerResponse.ok().bodyValue(book))
+                .flatMap(ServerResponse.ok()::bodyValue) // 可否？
+                //.flatMap(book -> ServerResponse.ok().bodyValue(book))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
@@ -92,7 +93,7 @@ public class C03RouterBased {
 
         log.debug("lxm create");
         return C04ReactiveControllerHelper.requestBodyToMono(request, validator,
-                (t, errors) -> InMemoryDataSource.findBookMonoById(t.getIsbn()) // 校验唯一性
+                (t, errors) -> InMemoryDataSource.findBookMonoById(t.getIsbn()) // 校验唯一性。 新版本的webflux支持注解校验了吗？
                             .map((book -> {
                                 errors.rejectValue("isbn", "already.exists", "Already exists");
                                 return Tuples.of(book, errors);

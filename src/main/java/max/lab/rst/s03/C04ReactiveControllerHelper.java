@@ -50,7 +50,7 @@ public class C04ReactiveControllerHelper {
                     if (extraValidator != null) {
                         aMono = extraValidator.validate(t, errors);
                     }
-                    return aMono.switchIfEmpty(Mono.just(Tuples.of(t, errors))); // Ensure there will data flowing in the pipeline
+                    return aMono.switchIfEmpty(Mono.just(Tuples.of(t, errors))); // Ensure there will data flowing in the pipeline, 上面可能返回空
                 }) // 为什么不用map呢？
                 //.map(tuple2 -> {return tuple2.getT2().hasErrors()? Mono.error(new ValidationException(tuple2.getT2())): Mono.just(tuple2.getT1());}); // 为何不可？
                .flatMap(tuple2 -> tuple2.getT2().hasErrors()? Mono.error(new ValidationException(tuple2.getT2())): Mono.just(tuple2.getT1()));
@@ -79,7 +79,7 @@ public class C04ReactiveControllerHelper {
     }
 
     public static <T> T convertValue(ObjectMapper objectMapper,
-                                     @Nullable MultiValueMap<String, String> map,
+                                     @Nullable MultiValueMap<String, String> map, // api 返回的就是这类型, 一个键，多个值
                                      Class<T> clz) {
         Assert.notNull(objectMapper, "objectMapper must NOT be null");
         Assert.notNull(clz, "clz must NOT be null");
@@ -93,7 +93,7 @@ public class C04ReactiveControllerHelper {
             if (list != null && list.size() == 1) {
                 return (new SimpleEntry<>(key, list.get(0)));
             }
-            return e;
+            return e; // 为何不直接返回？
         }).collect(toMap(Entry::getKey, Entry::getValue));
         return objectMapper.convertValue(theMap, clz);
     }
@@ -115,7 +115,7 @@ public class C04ReactiveControllerHelper {
         Assert.notNull(clz, "clz must NOT be null");
         Assert.notNull(validator, "validator must NOT be null");
 
-        var mono = Mono.just(convertValue(objectMapper, request.queryParams(), clz));
+        var mono = Mono.just(convertValue(objectMapper, request.queryParams(), clz)); // 只是转换mono的方式不同
         return validate(validator, extraValidator, mono);
     }
 }

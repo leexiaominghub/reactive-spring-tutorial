@@ -1,44 +1,57 @@
-/*
 package max.lab.rst.s04;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 import max.lab.rst.domain.Book;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
 
-*/
 /**
  * https://medium.com/@filia.aleks/microservice-performance-battle-spring-mvc-vs-webflux-80d39fd81bf0
  * https://medium.com/@kalpads/configuring-timeouts-in-spring-reactive-webclient-4bc5faf56411
- *//*
+ */
 
+@Slf4j
 public class C01WebClientShowcases {
     public static void main(String[] args) {
+        log.info("start");
         var book = Book.builder().isbn(String.valueOf(System.currentTimeMillis()))
                 .category("TEST")
                 .title("Book from Webclient")
                 .price(BigDecimal.valueOf(23.99))
                 .build();
 
+        //AtomicReference<Mono<Book>> bookMono = new AtomicReference<>();
         var webClient = WebClient.create("http://localhost:8080/routed");
         webClient.post().uri("/book")
             .body(Mono.just(book), Book.class)
             .exchange()
             .doOnNext(
-                clientResponse -> System.out.println(">>>>>>>> POST RESPONSE STATUS CODE: " + clientResponse.statusCode())
-            ).block();
+                clientResponse -> {
+                  System.out.println(">>>>>>>> POST RESPONSE STATUS CODE: " + clientResponse.statusCode());
 
-        webClient.get().uri("/book/{isbn}", book.getIsbn())
-            .retrieve()
+                  // 如果把mono放在main里，就会启动新线程，否则，就在nio线程, 但仍然会释放channel
+                  webClient.get().uri("/book/{isbn}", book.getIsbn()) // 会在新线程启动, 但是这里main线程必须先解锁吗？
+                          .retrieve()
+                          .bodyToMono(Book.class)
+                          .doOnNext(aBook -> System.out.println(">>>>>>> GET BOOK: " + aBook)).subscribe(); // 在这里不可以block, 若无subscribe则不会执行
+                  System.out.println("done");
+
+                }
+            ).block(); // 日志显示这里client释放了channel， 如何复用channel呢？
+
+      try {
+        Thread.currentThread().join(); // 启动客户端以后，如果使客户端线程退出呢？block并不会退出
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+/*
+            webClient.get().uri("/book/{isbn}", book.getIsbn())
+              .retrieve()
             .bodyToMono(Book.class)
             .doOnNext(aBook -> System.out.println(">>>>>>> GET BOOK: " + aBook))
             .block();
@@ -62,7 +75,8 @@ public class C01WebClientShowcases {
             .doOnNext(
                 clientResponse -> System.out.println(">>>>>>>> DELETE RESPONSE STATUS CODE: " + clientResponse.statusCode())
             ).block();
-
+*/
+/*
         webClient.post().uri("/book")
             .body(Mono.just(book), Book.class)
             .exchange()
@@ -75,7 +89,9 @@ public class C01WebClientShowcases {
             })
             .retryBackoff(3, Duration.ofSeconds(1))
             .block();
+*/
 
+/*
         var httpClient = HttpClient.create()
                             .tcpConfiguration(
                                 tcpClient -> {
@@ -90,6 +106,6 @@ public class C01WebClientShowcases {
         var webClientWithHttpTimeout = WebClient.builder()
                                         .clientConnector(connector)
                                         .build();
+*/
     }
 }
-*/

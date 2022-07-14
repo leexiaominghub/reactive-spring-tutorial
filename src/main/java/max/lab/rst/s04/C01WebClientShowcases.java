@@ -116,7 +116,7 @@ public class C01WebClientShowcases {
                                     return tcpClient;
                                 }
                             );
-        var connector = new ReactorClientHttpConnector(httpClient);
+        var connector = new ReactorClientHttpConnector(httpClient);                    
         var webClientWithHttpTimeout = WebClient.builder()
                                         .clientConnector(connector)
                                         .build();

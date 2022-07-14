@@ -1,4 +1,3 @@
-/*
 package max.lab.rst.s05;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class C01BookRepository {
 
     public Mono<Book> findById(String isbn) {
         return dbClient.execute("select * from book where isbn = :isbn")
-                .bind("isbn", isbn)
+                .bind("isbn", isbn) // 还可以使用下面的函数方法
                 .as(Book.class)
                 .fetch()
                 .one();
@@ -69,4 +68,3 @@ public class C01BookRepository {
                 .all();
     }
 }
-*/

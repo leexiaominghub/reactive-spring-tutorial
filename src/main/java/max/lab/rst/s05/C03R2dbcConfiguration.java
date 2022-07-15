@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.reactive.TransactionalOperator;
 
 @Configuration
-// @EnableTransactionManagement
+// @EnableTransactionManagement // 也可以使用注解的方法
 public class C03R2dbcConfiguration {
     @Bean
     public ConnectionFactoryInitializer connectionFactoryInitializer(ConnectionFactory connectionFactory) {

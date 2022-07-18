@@ -50,7 +50,7 @@ public class C01ReactiveCircuitBreaker {
     private <T> T getCircuitBreakerProperty(Environment env, String id, String name, Class<T> clz, T defaultValue) {
         var propName = String.format(PROP_NAME, id, name);
         var defaultPropName = String.format(PROP_NAME, "default", name);
-        var value = env.getProperty(propName, clz, env.getProperty(defaultPropName, clz, defaultValue));
+        var value = env.getProperty(propName, clz, env.getProperty(defaultPropName, clz, defaultValue)); // evn会在yml文件里找？
         log.info(">>>>>>>>>>>>> {} or {}: {}", propName, defaultPropName, value);
         return value;
     }
@@ -63,11 +63,11 @@ public class C01ReactiveCircuitBreaker {
                     var hello = webClientBuilder.build().get()
                             .uri("hello").retrieve()
                             .bodyToMono(String.class);
-                    var r4jHello = cbFactory.create("hello")
+                    var r4jHello = cbFactory.create("hello") // breaker 的id
                             .run(hello, t -> {
                                 log.error("Failed to call hello endpoint: {}", t.getMessage());
                                 return Mono.just("sorry, ;-(");
-                            });
+                            }); // 包了一层
                     return ServerResponse.ok().body(r4jHello, String.class);
                 })
                 .build();

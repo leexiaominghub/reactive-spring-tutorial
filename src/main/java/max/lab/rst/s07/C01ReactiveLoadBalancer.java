@@ -18,7 +18,7 @@ import java.time.Duration;
 public class C01ReactiveLoadBalancer {
 
     @Bean
-    public WebClient.Builder loadBalancedWebClientBuilder(ReactorLoadBalancerExchangeFilterFunction filter) {
+    public WebClient.Builder loadBalancedWebClientBuilder(ReactorLoadBalancerExchangeFilterFunction filter) { // 应该是这个filter会去eureka里找对应的地址？
         return WebClient.builder().filter(filter).baseUrl("http://demo-client");
     }
 
@@ -29,12 +29,12 @@ public class C01ReactiveLoadBalancer {
 //    }
 
     @Bean
-    public CommandLineRunner commandLineRunner(WebClient.Builder builder) {
+    public CommandLineRunner commandLineRunner(WebClient.Builder builder) {  // 处理器，截断main吗？ 还是main运行之后会运行这个？
         return (args -> builder.build().get().uri("hello").retrieve().bodyToMono(String.class)
                 .onErrorReturn("Failed to call hello endpoint")
                 .doOnNext(s -> System.out.println(">>>>>>>>>>>>>> Server Response: " + s))
                 .delayElement(Duration.ofMillis(500))
-                .repeat(3)
+                .repeat(3) // 为什么视频是4，但是循环了5次？
                 .subscribe()
         );
     }

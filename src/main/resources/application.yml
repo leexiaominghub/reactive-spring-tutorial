@@ -28,7 +28,7 @@ spring:
 logging:
   level:
     #org.springframework.cloud.client.loadbalancer: DEBUG
-    root: DEBUG
+    root: info
 
 management:
   endpoints:

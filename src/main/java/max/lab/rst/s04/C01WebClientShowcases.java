@@ -31,7 +31,8 @@ public class C01WebClientShowcases {
     public static void main(String[] args) {
         log.info("start");
 
-        Mono.just("1").subscribe(System.out::println);
+        Mono.just("1")
+                .subscribe(System.out::println);
 
         var book = Book.builder().isbn(String.valueOf(System.currentTimeMillis()))
                 .category("TEST")

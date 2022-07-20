@@ -9,13 +9,13 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 
-*/
 /*
  * https://medium.com/@filia.aleks/microservice-performance-battle-spring-mvc-vs-webflux-80d39fd81bf0
  * https://medium.com/@kalpads/configuring-timeouts-in-spring-reactive-webclient-4bc5faf56411
- **//*
+ **/
 
 
+/*
 public class C04WebClientR2dbc {
     public static void main(String[] args) {
         var book = Book.builder().isbn(String.valueOf(System.currentTimeMillis()))
@@ -39,11 +39,11 @@ public class C04WebClientR2dbc {
                 clientResponse -> System.out.println(">>>>>>>> POST RESPONSE STATUS CODE: " + clientResponse.statusCode())
             ).block();
 
-        // webClient.get().uri("/book/{isbn}", book.getIsbn())
-        //     .retrieve()
-        //     .bodyToMono(Book.class)
-        //     .doOnNext(aBook -> System.out.println(">>>>>>> GET BOOK: " + aBook))
-        //     .block();
+         webClient.get().uri("/book/{isbn}", book.getIsbn())
+             .retrieve()
+             .bodyToMono(Book.class)
+             .doOnNext(aBook -> System.out.println(">>>>>>> GET BOOK: " + aBook))
+             .block();
 
         // book.setPrice(BigDecimal.valueOf(39.99));
         // webClient.put().uri("/book/{isbn}", book.getIsbn())

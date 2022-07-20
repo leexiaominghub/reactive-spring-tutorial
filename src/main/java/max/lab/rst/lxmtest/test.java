@@ -24,7 +24,9 @@ public class test {
 
     String str = "hi";
 
-    Mono.justOrEmpty(str).doOnNext(t -> System.out.println(t + "onNext")).subscribe(System.out::println);
+    Mono.justOrEmpty(str)
+            .doOnNext(t -> System.out.println(t + "onNext"))
+            .subscribe(System.out::println);
 
 
   }
